@@ -35,6 +35,7 @@
     "eslint-plugin-unicorn": "^10.0.0",
     "eslint-plugin-xss": "^0.1.9",
     "fs-extra": "^8.1.0",
+    "jsdoc-to-markdown": "^5.0.0",
     "nyc": "^14.1.1",
     "sinon": "^7.4.1"
   },
