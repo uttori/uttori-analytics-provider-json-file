@@ -81,7 +81,7 @@ class AnalyticsProvider {
    * @returns {Array} View count for the given slug.
    * @example
    * analyticsProvider.getPopularDocuments(10);
-   * ➜ [ { 'faq': 10 }}
+   * ➜ [ { 'faq': 10 } ]
    * @memberof AnalyticsProvider
    */
   async getPopularDocuments(limit) {

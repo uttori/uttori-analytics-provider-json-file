@@ -111,7 +111,7 @@ Returns the most popular documents.
 **Example**  
 ```js
 analyticsProvider.getPopularDocuments(10);
-➜ [ { 'faq': 10 }}
+➜ [ { 'faq': 10 } ]
 ```
 
 * * *
