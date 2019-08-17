@@ -12,7 +12,7 @@
     "json"
   ],
   "engines": {
-    "node": ">= 8.11"
+    "node": ">= 10"
   },
   "dependencies": {
     "debug": "^4.1.1",
@@ -39,7 +39,9 @@
     "nyc": "^14.1.1",
     "sinon": "^7.4.1"
   },
-  "files": [],
+  "files": [
+    "index.js"
+  ],
   "main": "./index.js",
   "nyc": {
     "cache": true,

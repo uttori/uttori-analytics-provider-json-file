@@ -1,8 +1,8 @@
-[![view on npm](http://img.shields.io/npm/v/  uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/  uttori-analytics-provider-json-file)
-[![npm module downloads](http://img.shields.io/npm/dt/  uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/  uttori-analytics-provider-json-file)
-[![Build Status](https://travis-ci.org/uttori/  uttori-analytics-provider-json-file.svg?branch=master)](https://travis-ci.org/uttori/  uttori-analytics-provider-json-file)
-[![Dependency Status](https://david-dm.org/uttori/  uttori-analytics-provider-json-file.svg)](https://david-dm.org/uttori/  uttori-analytics-provider-json-file)
-[![Coverage Status](https://coveralls.io/repos/uttori/  uttori-analytics-provider-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/  uttori-analytics-provider-json-file?branch=master)
+[![view on npm](http://img.shields.io/npm/v/uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/uttori-analytics-provider-json-file)
+[![npm module downloads](http://img.shields.io/npm/dt/uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/uttori-analytics-provider-json-file)
+[![Build Status](https://travis-ci.org/uttori/uttori-analytics-provider-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-analytics-provider-json-file)
+[![Dependency Status](https://david-dm.org/uttori/uttori-analytics-provider-json-file.svg)](https://david-dm.org/uttori/uttori-analytics-provider-json-file)
+[![Coverage Status](https://coveralls.io/repos/uttori/uttori-analytics-provider-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-analytics-provider-json-file?branch=master)
 
 # Uttori Analytics Provider - JSON File
 
