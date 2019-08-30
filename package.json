@@ -17,7 +17,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "ramda": "^0.26.1",
-    "uttori-utilities": "^1.0.2"
+    "uttori-utilities": "^1.1.0"
   },
   "devDependencies": {
     "ava": "^2.3.0",
@@ -32,6 +32,7 @@
     "eslint-plugin-optimize-regex": "^1.1.6",
     "eslint-plugin-ramda": "^2.5.1",
     "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^2.0.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^10.0.0",
     "eslint-plugin-xss": "^0.1.9",
@@ -57,7 +58,8 @@
     "docs": "jsdoc2md --private --example-lang js --template README.hbs index.js > README.md",
     "lint": "eslint .",
     "report": "nyc report --reporter=html",
-    "test": "NODE_ENV=test nyc ava",
+    "test": "NODE_ENV=test nyc ava --serial --concurrency=1",
+    "test-debug": "DEBUG=Uttori* NODE_ENV=test ava --serial --concurrency=1",
     "validate": "npm ls"
   }
 }

@@ -29,39 +29,41 @@ test('constructor(config): throws an error when missing config directory', (t) =
 });
 
 
-test('update(slug): handles empty slug', (t) => {
+test('update(slug): handles empty slug', async (t) => {
   const ap = new AnalyticsProvider(config);
-  t.notThrows(() => ap.update());
+  await t.notThrowsAsync(() => ap.update());
 });
 
-test('update(slug): properly stores new view count', (t) => {
+test('update(slug): properly stores new view count', async (t) => {
   const ap = new AnalyticsProvider(config);
-  ap.update('new');
+  await ap.update('new', 0);
+  await ap.update('new');
   const out = ap.get('new');
   t.is(out, 1);
 });
 
-test('update(slug): properly updates existing view count', (t) => {
+test('update(slug): properly updates existing view count', async (t) => {
   const ap = new AnalyticsProvider(config);
-  ap.update('new');
-  ap.update('new');
+  await ap.update('new', 0);
+  await ap.update('new');
+  await ap.update('new');
   const out = ap.get('new');
   t.is(out, 2);
 });
 
-test('get(slug): returns correct view count', (t) => {
+test('get(slug): returns correct view count', async (t) => {
   const ap = new AnalyticsProvider(config);
-  let out;
-  out = ap.get('test');
+  await ap.update('test', 0);
+  let out = ap.get('test');
   t.is(out, 0);
 
-  ap.update('test');
-  ap.update('test');
+  await ap.update('test');
+  await ap.update('test');
   out = ap.get('test');
   t.is(out, 2);
 
-  ap.update('test');
-  ap.update('test');
+  await ap.update('test');
+  await ap.update('test');
   out = ap.get('test');
   t.is(out, 4);
 });

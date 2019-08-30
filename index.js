@@ -34,29 +34,38 @@ class AnalyticsProvider {
       ...config,
     };
 
-    this.pageVisits = FileUtility.readJSON(this.config.directory, this.config.name, this.config.extension);
+    this.pageVisits = FileUtility.readJSONSync(this.config.directory, this.config.name, this.config.extension);
   }
 
   /**
    * Updates the view count for a given document slug.
-   * @param {string} slug - The slug ofthe document to be updated.
+   * @async
+   * @param {string} slug - The slug of the document to be updated.
+   * @param {string} [value] - An optional value to set the count to exactly.
    * @example
    * analyticsProvider.update('faq');
    * @memberof AnalyticsProvider
    */
-  update(slug) {
+  async update(slug, value) {
+    debug('update:', slug, value);
     if (!slug) {
-      debug('Missing slug.');
-      return;
+      debug('Missing:', slug, value);
+      return 0;
     }
 
-    if (this.pageVisits[slug]) {
+    if (Number.isInteger(this.pageVisits[slug])) {
       this.pageVisits[slug]++;
     } else {
       this.pageVisits[slug] = 1;
     }
+    if (Number.isInteger(value)) {
+      this.pageVisits[slug] = value;
+    }
 
-    FileUtility.writeFile(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
+    await FileUtility.writeFile(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
+
+    debug('Updated:', slug, this.pageVisits[slug]);
+    return this.pageVisits[slug];
   }
 
   /**
@@ -69,9 +78,13 @@ class AnalyticsProvider {
    * @memberof AnalyticsProvider
    */
   get(slug) {
-    if (!slug || !this.pageVisits[slug]) {
+    debug('get:', slug);
+    if (!slug || !Number.isInteger(this.pageVisits[slug])) {
+      debug('Missing:', slug, this.pageVisits[slug]);
       return 0;
     }
+
+    debug('Got:', slug, this.pageVisits[slug]);
     return this.pageVisits[slug];
   }
 
@@ -90,8 +103,7 @@ class AnalyticsProvider {
       debug('Missing or invalid limit.', limit);
       throw new Error('Missing or invalid limit.');
     }
-
-    return R.map((slug) => ({ slug }),
+    const popular = R.map((slug) => ({ slug }),
       R.pluck(0,
         R.take(limit,
           R.reverse(
@@ -100,6 +112,9 @@ class AnalyticsProvider {
         )
       )
     );
+
+    debug('Found:', popular);
+    return popular;
   }
 }
 
