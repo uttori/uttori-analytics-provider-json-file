@@ -17,7 +17,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "ramda": "^0.26.1",
-    "uttori-utilities": "^1.1.0"
+    "uttori-utilities": "^1.2.0"
   },
   "devDependencies": {
     "ava": "^2.3.0",
