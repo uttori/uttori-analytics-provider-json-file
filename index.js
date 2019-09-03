@@ -15,7 +15,7 @@ class AnalyticsProvider {
   * @param {Object} config - A configuration object.
   * @param {string} config.directory - The directory to store the JSON file containing the page view analytics.
   * @param {string} [config.name] - The file name of the file containing the page view analytics.
-  * @param {string} [config.param] - The file extension of the file containing the page view analytics.
+  * @param {string} [config.extension] - The file extension of the file containing the page view analytics.
   * @constructor
   */
   constructor(config) {
@@ -34,6 +34,7 @@ class AnalyticsProvider {
       ...config,
     };
 
+    FileUtility.ensureDirectorySync(this.config.directory);
     this.pageVisits = FileUtility.readJSONSync(this.config.directory, this.config.name, this.config.extension);
   }
 
