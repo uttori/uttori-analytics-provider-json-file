@@ -1,6 +1,6 @@
 {
   "name": "uttori-analytics-provider-json-file",
-  "version": "2.0.1-pre",
+  "version": "2.1.0",
   "description": "Analytics provider for Uttori that uses JSON files.",
   "author": "Matthew Callis <matthew.callis@gmail.com>",
   "contributors": [],
