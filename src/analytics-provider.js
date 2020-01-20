@@ -1,4 +1,4 @@
-const debug = require('debug')('Uttori.AnalyticsProvider.JSON');
+const debug = require('debug')('Uttori.Plugin.AnalyticsProvider');
 const R = require('ramda');
 const { FileUtility } = require('uttori-utilities');
 
@@ -19,6 +19,7 @@ class AnalyticsProvider {
   * @constructor
   */
   constructor(config) {
+    debug('constructor');
     if (!config) {
       debug('No config provided.');
       throw new Error('No config provided.');
@@ -55,15 +56,17 @@ class AnalyticsProvider {
     }
 
     if (Number.isInteger(this.pageVisits[slug])) {
-      this.pageVisits[slug]++;
+      debug('Existing');
+      this.pageVisits[slug] += 1;
     } else {
+      debug('New');
       this.pageVisits[slug] = 1;
     }
     if (Number.isInteger(value)) {
       this.pageVisits[slug] = value;
     }
 
-    await FileUtility.writeFile(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
+    await FileUtility.writeFileSync(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
 
     debug('Updated:', slug, this.pageVisits[slug]);
     return this.pageVisits[slug];

@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const test = require('ava');
-const AnalyticsProvider = require('..');
+const { EventDispatcher, FileUtility } = require('uttori-utilities');
+const AnalyticsPlugin = require('../src');
 
 test.beforeEach(async () => {
   await fs.remove('test/site');
@@ -12,95 +13,105 @@ test.afterEach.always(async () => {
   await fs.remove('test/site');
 });
 
-const config = {
-  directory: 'test/site/data',
-};
-
-test('constructor(config): does not error', (t) => {
-  t.notThrows(() => new AnalyticsProvider(config));
+test('AnalyticsPlugin.defaultConfig(): can return a default config', (t) => {
+  t.notThrows(AnalyticsPlugin.defaultConfig);
 });
 
-test('constructor(config): throws an error when missing config', (t) => {
-  t.throws(() => new AnalyticsProvider(), 'No config provided.');
+test('AnalyticsPlugin.validateConfig(config, _context): throws when sitemaps key is missing', (t) => {
+  t.throws(() => {
+    AnalyticsPlugin.validateConfig({});
+  }, { message: 'Config Error: \'uttori-plugin-analytics-json-file\' configuration key is missing.' });
 });
 
-test('constructor(config): throws an error when missing config directory', (t) => {
-  t.throws(() => new AnalyticsProvider({}), 'No directory provided.');
+test('AnalyticsPlugin.validateConfig(config, _context): throws when directory is missing', (t) => {
+  t.throws(() => {
+    AnalyticsPlugin.validateConfig({
+      [AnalyticsPlugin.configKey]: {},
+    });
+  }, { message: 'directory is required should be the path to the location you want the JSON file to be writtent to.' });
 });
 
-
-test('update(slug): handles empty slug', async (t) => {
-  const ap = new AnalyticsProvider(config);
-  await t.notThrowsAsync(() => ap.update());
+test('AnalyticsPlugin.validateConfig(config, _context): throws when directory is not a string', (t) => {
+  t.throws(() => {
+    AnalyticsPlugin.validateConfig({
+      [AnalyticsPlugin.configKey]: {
+        directory: {},
+      },
+    });
+  }, { message: 'directory is required should be the path to the location you want the JSON file to be writtent to.' });
 });
 
-test('update(slug): properly stores new view count', async (t) => {
-  const ap = new AnalyticsProvider(config);
-  await ap.update('new', 0);
-  await ap.update('new');
-  const out = ap.get('new');
-  t.is(out, 1);
+test('AnalyticsPlugin.validateConfig(config, _context): can validate', (t) => {
+  t.notThrows(() => {
+    AnalyticsPlugin.validateConfig({
+      [AnalyticsPlugin.configKey]: {
+        directory: './',
+      },
+    });
+  });
 });
 
-test('update(slug): properly updates existing view count', async (t) => {
-  const ap = new AnalyticsProvider(config);
-  await ap.update('new', 0);
-  await ap.update('new');
-  await ap.update('new');
-  const out = ap.get('new');
-  t.is(out, 2);
+test('AnalyticsPlugin.register(context): errors without event dispatcher', (t) => {
+  t.throws(() => {
+    AnalyticsPlugin.register({ hooks: {} });
+  }, { message: 'Missing event dispatcher in \'context.hooks.on(event, callback)\' format.' });
 });
 
-test('get(slug): returns correct view count', async (t) => {
-  const ap = new AnalyticsProvider(config);
-  await ap.update('test', 0);
-  let out = ap.get('test');
-  t.is(out, 0);
-
-  await ap.update('test');
-  await ap.update('test');
-  out = ap.get('test');
-  t.is(out, 2);
-
-  await ap.update('test');
-  await ap.update('test');
-  out = ap.get('test');
-  t.is(out, 4);
+test('AnalyticsPlugin.register(context): errors without events', (t) => {
+  t.throws(() => {
+    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: { } } });
+  }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
-test('get(slug): returns 0 when requesting view count of missing document', (t) => {
-  const ap = new AnalyticsProvider(config);
-  const out = ap.get('missing');
-  t.is(out, 0);
+test('AnalyticsPlugin.register(context): can register', (t) => {
+  t.notThrows(() => {
+    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: { events: { updateDocument: [] }, directory: './', } } });
+  });
 });
 
-test('getPopularDocuments(limit): returns the requested number of popular documents', async (t) => {
-  const pageVisits = {
-    '65816-reference': 7722,
-    '65c816-code-snippets': 707,
-    aaendi: 114,
-    'aretha-2': 361,
-    'asm-hacking-for-dummies': 677,
-    'asm-tutorial-part-1': 1934,
-    'asm-tutorial-part-2': 752,
-    backgrounds: 1510,
-    'basic-ca65-usage-for-snes-programming': 669,
+test('AnalyticsPlugin: E2E', async (t) => {
+  const hooks = new EventDispatcher();
+  const context = {
+    hooks,
+    config: {
+      [AnalyticsPlugin.configKey]: {
+        directory: 'test/site/data',
+        events: {
+          get: ['get'],
+          getPopularDocuments: ['getPopularDocuments'],
+          updateDocument: ['updateDocument'],
+          validateConfig: ['validate-config'],
+        },
+      },
+    },
   };
 
-  const ap = new AnalyticsProvider(config);
-  ap.pageVisits = { ...pageVisits };
-  const out = await ap.getPopularDocuments(1);
-  t.deepEqual(out, [{ slug: '65816-reference' }]);
-});
+  AnalyticsPlugin.register(context);
 
-test('getPopularDocuments(limit): throws an error with invalid limit', async (t) => {
-  t.plan(1);
-  const ap = new AnalyticsProvider(config);
-  await t.throwsAsync(async () => ap.getPopularDocuments('1'), 'Missing or invalid limit.');
-});
+  let output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":1,"zero":0,"two":2}');
 
-test('getPopularDocuments(limit): throws an error with missing limit', async (t) => {
-  t.plan(1);
-  const ap = new AnalyticsProvider(config);
-  await t.throwsAsync(async () => ap.getPopularDocuments(), 'Missing or invalid limit.');
+  // hooks.dispatch('updateDocument', { slug: 'test' });
+  // output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  // t.is(output, '{"test":2,"zero":0,"two":2}');
+
+  await hooks.filter('updateDocument', { slug: 'new' });
+  output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":1,"zero":0,"two":2,"new":1}');
+
+  await hooks.filter('updateDocument', { slug: 'new' });
+  output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":1,"zero":0,"two":2,"new":2}');
+
+  await hooks.validate('updateDocument', { slug: 'test' });
+  output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":2,"zero":0,"two":2,"new":2}');
+
+  await hooks.validate('updateDocument', {});
+  output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":2,"zero":0,"two":2,"new":2}');
+
+  await hooks.filter('updateDocument', { slug: 'new' });
+  output = await FileUtility.readFile('test/site/data', 'visits', 'json');
+  t.is(output, '{"test":2,"zero":0,"two":2,"new":3}');
 });

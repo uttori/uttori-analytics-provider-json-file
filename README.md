@@ -1,8 +1,8 @@
-[![view on npm](http://img.shields.io/npm/v/uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/uttori-analytics-provider-json-file)
-[![npm module downloads](http://img.shields.io/npm/dt/uttori-analytics-provider-json-file.svg)](https://www.npmjs.org/package/uttori-analytics-provider-json-file)
-[![Build Status](https://travis-ci.org/uttori/uttori-analytics-provider-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-analytics-provider-json-file)
-[![Dependency Status](https://david-dm.org/uttori/uttori-analytics-provider-json-file.svg)](https://david-dm.org/uttori/uttori-analytics-provider-json-file)
-[![Coverage Status](https://coveralls.io/repos/uttori/uttori-analytics-provider-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-analytics-provider-json-file?branch=master)
+[![view on npm](http://img.shields.io/npm/v/uttori-plugin-analytics-json-file.svg)](https://www.npmjs.org/package/uttori-plugin-analytics-json-file)
+[![npm module downloads](http://img.shields.io/npm/dt/uttori-plugin-analytics-json-file.svg)](https://www.npmjs.org/package/uttori-plugin-analytics-json-file)
+[![Build Status](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file)
+[![Dependency Status](https://david-dm.org/uttori/uttori-plugin-analytics-json-file.svg)](https://david-dm.org/uttori/uttori-plugin-analytics-json-file)
+[![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-analytics-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-analytics-json-file?branch=master)
 
 # Uttori Analytics Provider - JSON File
 
@@ -11,13 +11,20 @@ Uttori analytics provider using JSON files on disk.
 ## Install
 
 ```bash
-npm install --save uttori-analytics-provider-json-file
+npm install --save uttori-plugin-analytics-json-file
 ```
 
-# Config
+## Config
 
 ```js
 {
+  // Registration Events
+  events: {
+    getPopularDocuments: ['getPopularDocuments'],
+    updateDocument: ['updateDocument'],
+    validateConfig: ['validate-config'],
+  },
+  // Directory files will be uploaded to.
   directory: '',
   name: 'visits',
   extension: 'json',
@@ -26,11 +33,11 @@ npm install --save uttori-analytics-provider-json-file
 
 * * *
 
-# API Reference
+## API Reference
 
-<a name="AnalyticsProvider"></a>
+<a name="AnalyticsPlugin"></a>
 
-## AnalyticsProvider
+## AnalyticsPlugin
 Page view analytics for Uttori documents using JSON files stored on the local file system.
 
 **Kind**: global class  
@@ -41,77 +48,112 @@ Page view analytics for Uttori documents using JSON files stored on the local fi
 | config | <code>Object</code> | The configuration object. |
 
 
-* [AnalyticsProvider](#AnalyticsProvider)
-    * [new AnalyticsProvider(config)](#new_AnalyticsProvider_new)
-    * [.update(slug)](#AnalyticsProvider+update)
-    * [.get(slug)](#AnalyticsProvider+get) ⇒ <code>Number</code>
-    * [.getPopularDocuments(limit)](#AnalyticsProvider+getPopularDocuments) ⇒ <code>Array</code>
+* [AnalyticsPlugin](#AnalyticsPlugin)
+    * [.configKey](#AnalyticsPlugin.configKey) ⇒ <code>String</code>
+    * [.defaultConfig()](#AnalyticsPlugin.defaultConfig) ⇒ <code>Object</code>
+    * [.validateConfig(config, _context)](#AnalyticsPlugin.validateConfig)
+    * [.register(context)](#AnalyticsPlugin.register)
+    * [.updateDocument(document, _context)](#AnalyticsPlugin.updateDocument) ⇒ <code>Object</code>
 
-<a name="new_AnalyticsProvider_new"></a>
+<a name="AnalyticsPlugin.configKey"></a>
 
-### new AnalyticsProvider(config)
-Creates an instance of AnalyticsProvider.
+### AnalyticsPlugin.configKey ⇒ <code>String</code>
+The configuration key for plugin to look for in the provided configuration.
 
+**Kind**: static property of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
+**Returns**: <code>String</code> - The configuration key.  
+**Example** *(AnalyticsPlugin.configKey)*  
+```js
+const config = { ...AnalyticsPlugin.defaultConfig(), ...context.config[AnalyticsPlugin.configKey] };
+```
+<a name="AnalyticsPlugin.defaultConfig"></a>
+
+### AnalyticsPlugin.defaultConfig() ⇒ <code>Object</code>
+The default configuration.
+
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
+**Returns**: <code>Object</code> - The configuration.  
+**Example** *(AnalyticsPlugin.defaultConfig())*  
+```js
+const config = { ...AnalyticsPlugin.defaultConfig(), ...context.config[AnalyticsPlugin.configKey] };
+```
+<a name="AnalyticsPlugin.validateConfig"></a>
+
+### AnalyticsPlugin.validateConfig(config, _context)
+Validates the provided configuration for required entries.
+
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | config | <code>Object</code> | A configuration object. |
-| config.directory | <code>string</code> | The directory to store the JSON file containing the page view analytics. |
-| [config.name] | <code>string</code> | The file name of the file containing the page view analytics. |
-| [config.param] | <code>string</code> | The file extension of the file containing the page view analytics. |
+| config[AnalyticsPlugin.configKey | <code>Object</code> | A configuration object specifically for this plugin. |
+| config[AnalyticsPlugin.configKey].urls | <code>Array.&lt;Object&gt;</code> | A collection of Uttori documents. |
+| config[AnalyticsPlugin.configKey].url_filters | <code>Array.&lt;RegExp&gt;</code> | A collection of Regular Expression URL filters. |
+| config[AnalyticsPlugin.configKey].base_url | <code>String</code> | The base URL (ie https://domain.tld) for all documents. |
+| config[AnalyticsPlugin.configKey].directory | <code>String</code> | The path to the location you want the sitemap file to be writtent to. |
+| _context | <code>Object</code> | A Uttori-like context (unused). |
 
-**Example** *(Init AnalyticsProvider)*  
+**Example** *(AnalyticsPlugin.validateConfig(config, _context))*  
 ```js
-const analyticsProvider = new AnalyticsProvider({ directory: 'data' });
+AnalyticsPlugin.validateConfig({ ... });
 ```
-<a name="AnalyticsProvider+update"></a>
+<a name="AnalyticsPlugin.register"></a>
 
-### analyticsProvider.update(slug)
-Updates the view count for a given document slug.
+### AnalyticsPlugin.register(context)
+Register the plugin with a provided set of events on a provided Hook system.
 
-**Kind**: instance method of [<code>AnalyticsProvider</code>](#AnalyticsProvider)  
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| slug | <code>string</code> | The slug ofthe document to be updated. |
+| context | <code>Object</code> | A Uttori-like context. |
+| context.hooks | <code>Object</code> | An event system / hook system to use. |
+| context.hooks.on | <code>function</code> | An event registration function. |
+| context.config | <code>Object</code> | A provided configuration to use. |
+| context.config.events | <code>Object</code> | An object whose keys correspong to methods, and contents are events to listen for. |
 
-**Example**  
+**Example** *(AnalyticsPlugin.register(context))*  
 ```js
-analyticsProvider.update('faq');
+const context = {
+  hooks: {
+    on: (event, callback) => { ... },
+  },
+  config: {
+    [AnalyticsPlugin.configKey]: {
+      ...,
+      events: {
+        callback: ['document-save', 'document-delete'],
+        validateConfig: ['validate-config'],
+      },
+    },
+  },
+};
+AnalyticsPlugin.register(context);
 ```
-<a name="AnalyticsProvider+get"></a>
+<a name="AnalyticsPlugin.updateDocument"></a>
 
-### analyticsProvider.get(slug) ⇒ <code>Number</code>
-Returns the view count for a given document slug.
+### AnalyticsPlugin.updateDocument(document, _context) ⇒ <code>Object</code>
+Wrapper function for calling update.
 
-**Kind**: instance method of [<code>AnalyticsProvider</code>](#AnalyticsProvider)  
-**Returns**: <code>Number</code> - View count for the given slug.  
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
+**Returns**: <code>Object</code> - The provided document.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| slug | <code>string</code> | The slug of the document to be looked up. |
+| document | <code>Object</code> | A Uttori document. |
+| _context | <code>Object</code> | A Uttori-like context (unused). |
 
-**Example**  
+**Example** *(AnalyticsPlugin.callback(_document, context))*  
 ```js
-analyticsProvider.get('faq');
-➜ 10
-```
-<a name="AnalyticsProvider+getPopularDocuments"></a>
-
-### analyticsProvider.getPopularDocuments(limit) ⇒ <code>Array</code>
-Returns the most popular documents.
-
-**Kind**: instance method of [<code>AnalyticsProvider</code>](#AnalyticsProvider)  
-**Returns**: <code>Array</code> - View count for the given slug.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| limit | <code>limit</code> | The number of documents to return. |
-
-**Example**  
-```js
-analyticsProvider.getPopularDocuments(10);
-➜ [ { 'faq': 10 } ]
+const context = {
+  config: {
+    [AnalyticsPlugin.configKey]: {
+      ...,
+    },
+  },
+};
+AnalyticsPlugin.updateDocument(document, null);
 ```
 
 * * *
