@@ -20,13 +20,17 @@ npm install --save uttori-plugin-analytics-json-file
 {
   // Registration Events
   events: {
-    getPopularDocuments: ['getPopularDocuments'],
-    updateDocument: ['updateDocument'],
+    callback: ['document-save', 'document-delete'],
     validateConfig: ['validate-config'],
   },
+
   // Directory files will be uploaded to.
   directory: '',
+
+  // Name of the JSON file.
   name: 'visits',
+
+  // File extension to use for the JSON file.
   extension: 'json',
 }
 ```

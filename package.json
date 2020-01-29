@@ -20,11 +20,12 @@
   "dependencies": {
     "debug": "^4.1.1",
     "ramda": "^0.26.1",
-    "uttori-utilities": "^2.0.0"
+    "uttori-utilities": "^2.1.0"
   },
   "devDependencies": {
-    "ava": "^3.0.0",
+    "ava": "^3.1.0",
     "coveralls": "^3.0.9",
+    "docsify-cli": "^4.4.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-ava": "^10.0.0",
@@ -35,14 +36,14 @@
     "eslint-plugin-optimize-regex": "^1.1.7",
     "eslint-plugin-ramda": "^2.5.1",
     "eslint-plugin-react": "^7.18.0",
-    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^15.0.1",
     "eslint-plugin-xss": "^0.1.9",
     "fs-extra": "^8.1.0",
     "jsdoc-to-markdown": "^5.0.3",
     "nyc": "^15.0.0",
-    "sinon": "^8.1.0"
+    "sinon": "^8.1.1"
   },
   "files": [
     "src/*"
@@ -71,10 +72,11 @@
   },
   "scripts": {
     "docs": "jsdoc2md --private --example-lang js --template README.hbs src/index.js > README.md; jsdoc2md --private --example-lang js src/analytics-provider.js > docs/analytics-provider.md;",
+    "docs-serve": "docsify init ./docs && docsify serve ./docs",
     "lint": "eslint .",
     "report": "nyc report --reporter=html",
-    "test": "NODE_ENV=test nyc ava --serial",
-    "test-debug": "DEBUG=Uttori* NODE_ENV=test ava --serial",
+    "test": "NODE_ENV=test nyc ava",
+    "test-debug": "DEBUG=Uttori* NODE_ENV=test nyc ava --serial --concurrency=1",
     "validate": "npm ls"
   }
 }
