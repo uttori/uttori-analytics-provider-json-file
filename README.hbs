@@ -20,7 +20,9 @@ npm install --save uttori-plugin-analytics-json-file
 {
   // Registration Events
   events: {
-    callback: ['document-save', 'document-delete'],
+    getCount: ['document-view-count'],
+    getPopularDocuments: ['popular-documents'],
+    updateDocument: ['document-save', 'document-delete'],
     validateConfig: ['validate-config'],
   },
 

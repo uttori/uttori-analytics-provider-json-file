@@ -118,7 +118,7 @@ class AnalyticsProvider {
     );
 
     debug('Found:', popular);
-    return popular;
+    return R.flatten(popular);
   }
 }
 

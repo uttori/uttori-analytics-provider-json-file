@@ -77,7 +77,7 @@ test('AnalyticsPlugin: E2E', async (t) => {
       [AnalyticsPlugin.configKey]: {
         directory: 'test/site/data',
         events: {
-          get: ['get'],
+          getCount: ['getCount'],
           getPopularDocuments: ['getPopularDocuments'],
           updateDocument: ['updateDocument'],
           validateConfig: ['validate-config'],
@@ -114,4 +114,37 @@ test('AnalyticsPlugin: E2E', async (t) => {
   await hooks.filter('updateDocument', { slug: 'new' });
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":2,"zero":0,"two":2,"new":3}');
+
+  // Fetch returns an array of results.
+  output = await hooks.fetch('getPopularDocuments', { limit: 4 });
+  t.deepEqual(output[0], [
+    { slug: 'new' },
+    { slug: 'two' },
+    { slug: 'test' },
+    { slug: 'zero' }
+  ]);
+  output = await hooks.fetch('getPopularDocuments', {});
+  t.deepEqual(output[0], [
+    { slug: 'new' },
+    { slug: 'two' },
+    { slug: 'test' },
+    { slug: 'zero' }
+  ]);
+  output = await hooks.fetch('getPopularDocuments');
+  t.deepEqual(output[0], [
+    { slug: 'new' },
+    { slug: 'two' },
+    { slug: 'test' },
+    { slug: 'zero' }
+  ]);
+
+  // Can return the view count for a found document.
+  output = await hooks.fetch('getCount', { slug: 'new' });
+  t.is(output[0], 3);
+
+  // Return 0 for missing documents.
+  output = await hooks.fetch('getCount', { slug: 'nada' });
+  t.is(output[0], 0);
+  output = await hooks.fetch('getCount');
+  t.is(output[0], 0);
 });

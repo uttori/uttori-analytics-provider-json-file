@@ -20,7 +20,9 @@ npm install --save uttori-plugin-analytics-json-file
 {
   // Registration Events
   events: {
-    callback: ['document-save', 'document-delete'],
+    getCount: ['document-view-count'],
+    getPopularDocuments: ['popular-documents'],
+    updateDocument: ['document-save', 'document-delete'],
     validateConfig: ['validate-config'],
   },
 
@@ -57,7 +59,9 @@ Page view analytics for Uttori documents using JSON files stored on the local fi
     * [.defaultConfig()](#AnalyticsPlugin.defaultConfig) ⇒ <code>Object</code>
     * [.validateConfig(config, _context)](#AnalyticsPlugin.validateConfig)
     * [.register(context)](#AnalyticsPlugin.register)
-    * [.updateDocument(document, _context)](#AnalyticsPlugin.updateDocument) ⇒ <code>Object</code>
+    * [.updateDocument(analytics)](#AnalyticsPlugin.updateDocument) ⇒ <code>Object</code>
+    * [.getCount(analytics)](#AnalyticsPlugin.getCount) ⇒ <code>Object</code>
+    * [.getPopularDocuments(analytics)](#AnalyticsPlugin.getPopularDocuments) ⇒ <code>Object</code>
 
 <a name="AnalyticsPlugin.configKey"></a>
 
@@ -127,7 +131,7 @@ const context = {
     [AnalyticsPlugin.configKey]: {
       ...,
       events: {
-        callback: ['document-save', 'document-delete'],
+        updateDocument: ['document-save', 'document-delete'],
         validateConfig: ['validate-config'],
       },
     },
@@ -137,7 +141,7 @@ AnalyticsPlugin.register(context);
 ```
 <a name="AnalyticsPlugin.updateDocument"></a>
 
-### AnalyticsPlugin.updateDocument(document, _context) ⇒ <code>Object</code>
+### AnalyticsPlugin.updateDocument(analytics) ⇒ <code>Object</code>
 Wrapper function for calling update.
 
 **Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
@@ -145,10 +149,9 @@ Wrapper function for calling update.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| document | <code>Object</code> | A Uttori document. |
-| _context | <code>Object</code> | A Uttori-like context (unused). |
+| analytics | <code>Object</code> | An AnalyticsProvider instance. |
 
-**Example** *(AnalyticsPlugin.callback(_document, context))*  
+**Example** *(AnalyticsPlugin.updateDocument(analytics))*  
 ```js
 const context = {
   config: {
@@ -158,6 +161,52 @@ const context = {
   },
 };
 AnalyticsPlugin.updateDocument(document, null);
+```
+<a name="AnalyticsPlugin.getCount"></a>
+
+### AnalyticsPlugin.getCount(analytics) ⇒ <code>Object</code>
+Wrapper function for calling update.
+
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
+**Returns**: <code>Object</code> - The provided document.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| analytics | <code>Object</code> | An AnalyticsProvider instance. |
+
+**Example** *(AnalyticsPlugin.getCount(analytics, slug))*  
+```js
+const context = {
+  config: {
+    [AnalyticsPlugin.configKey]: {
+      ...,
+    },
+  },
+};
+AnalyticsPlugin.getCount(analytics, slug);
+```
+<a name="AnalyticsPlugin.getPopularDocuments"></a>
+
+### AnalyticsPlugin.getPopularDocuments(analytics) ⇒ <code>Object</code>
+Wrapper function for calling update.
+
+**Kind**: static method of [<code>AnalyticsPlugin</code>](#AnalyticsPlugin)  
+**Returns**: <code>Object</code> - The provided document.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| analytics | <code>Object</code> | An AnalyticsProvider instance. |
+
+**Example** *(AnalyticsPlugin.updateDocument(analytics))*  
+```js
+const context = {
+  config: {
+    [AnalyticsPlugin.configKey]: {
+      ...,
+    },
+  },
+};
+AnalyticsPlugin.getPopularDocuments(analytics);
 ```
 
 * * *

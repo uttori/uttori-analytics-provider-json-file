@@ -76,7 +76,7 @@ class AnalyticsPlugin {
    *     [AnalyticsPlugin.configKey]: {
    *       ...,
    *       events: {
-   *         callback: ['document-save', 'document-delete'],
+   *         updateDocument: ['document-save', 'document-delete'],
    *         validateConfig: ['validate-config'],
    *       },
    *     },
@@ -97,20 +97,17 @@ class AnalyticsPlugin {
     }
     const analytics = new AnalyticsProvider(config);
     Object.keys(config.events).forEach((method) => {
-      if (method === 'updateDocument') {
-        config.events[method].forEach((event) => context.hooks.on(event, AnalyticsPlugin.updateDocument(analytics)));
-      } else if (typeof AnalyticsPlugin[method] === 'function') {
-        config.events[method].forEach((event) => context.hooks.on(event, AnalyticsPlugin[method]));
+      if (method === 'updateDocument' || method === 'getPopularDocuments' || method === 'getCount') {
+        config.events[method].forEach((event) => context.hooks.on(event, AnalyticsPlugin[method](analytics)));
       }
     });
   }
 
   /**
    * Wrapper function for calling update.
-   * @param {Object} document - A Uttori document.
-   * @param {Object} _context - A Uttori-like context (unused).
+   * @param {Object} analytics - An AnalyticsProvider instance.
    * @return {Object} The provided document.
-   * @example <caption>AnalyticsPlugin.callback(_document, context)</caption>
+   * @example <caption>AnalyticsPlugin.updateDocument(analytics)</caption>
    * const context = {
    *   config: {
    *     [AnalyticsPlugin.configKey]: {
@@ -128,6 +125,57 @@ class AnalyticsPlugin {
         await analytics.update(document.slug);
       }
       return document;
+    };
+  }
+
+  /**
+   * Wrapper function for calling update.
+   * @param {Object} analytics - An AnalyticsProvider instance.
+   * @return {Object} The provided document.
+   * @example <caption>AnalyticsPlugin.getCount(analytics, slug)</caption>
+   * const context = {
+   *   config: {
+   *     [AnalyticsPlugin.configKey]: {
+   *       ...,
+   *     },
+   *   },
+   * };
+   * AnalyticsPlugin.getCount(analytics, slug);
+   * @static
+   */
+  static getCount(analytics) {
+    return async (document, _context) => {
+      debug('getCount');
+      let count = 0;
+      if (document && document.slug) {
+        count = await analytics.get(document.slug);
+      }
+      return count;
+    };
+  }
+
+  /**
+   * Wrapper function for calling update.
+   * @param {Object} analytics - An AnalyticsProvider instance.
+   * @return {Object} The provided document.
+   * @example <caption>AnalyticsPlugin.updateDocument(analytics)</caption>
+   * const context = {
+   *   config: {
+   *     [AnalyticsPlugin.configKey]: {
+   *       ...,
+   *     },
+   *   },
+   * };
+   * AnalyticsPlugin.getPopularDocuments(analytics);
+   * @static
+   */
+  static getPopularDocuments(analytics) {
+    return async (config, _context) => {
+      debug('getPopularDocuments');
+      let documents = [];
+      const limit = (config && config.limit) || 10;
+      documents = await analytics.getPopularDocuments(limit);
+      return documents;
     };
   }
 }
