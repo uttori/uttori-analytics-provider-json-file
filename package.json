@@ -1,6 +1,6 @@
 {
   "name": "uttori-plugin-analytics-json-file",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Analytics plugin for Uttori that uses JSON files.",
   "author": "Matthew Callis <matthew.callis@gmail.com>",
   "contributors": [],
