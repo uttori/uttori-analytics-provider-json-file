@@ -2,16 +2,19 @@ const debug = require('debug')('Uttori.Plugin.AnalyticsPlugin');
 const AnalyticsProvider = require('./analytics-provider');
 
 /**
-  * Page view analytics for Uttori documents using JSON files stored on the local file system.
-  * @property {Object} config - The configuration object.
-  * @example <caption>Init AnalyticsProvider</caption>
-  * const analyticsProvider = new AnalyticsProvider({ directory: 'data' });
-  * @class
-  */
+ * Page view analytics for Uttori documents using JSON files stored on the local file system.
+ *
+ * @property {object} config - The configuration object.
+ * @example <caption>Init AnalyticsProvider</caption>
+ * const analyticsProvider = new AnalyticsProvider({ directory: 'data' });
+ * @class
+ */
 class AnalyticsPlugin {
   /**
    * The configuration key for plugin to look for in the provided configuration.
-   * @return {String} The configuration key.
+   *
+   * @type {string}
+   * @returns {string} The configuration key.
    * @example <caption>AnalyticsPlugin.configKey</caption>
    * const config = { ...AnalyticsPlugin.defaultConfig(), ...context.config[AnalyticsPlugin.configKey] };
    * @static
@@ -22,7 +25,8 @@ class AnalyticsPlugin {
 
   /**
    * The default configuration.
-   * @return {Object} The configuration.
+   *
+   * @returns {object} The configuration.
    * @example <caption>AnalyticsPlugin.defaultConfig()</caption>
    * const config = { ...AnalyticsPlugin.defaultConfig(), ...context.config[AnalyticsPlugin.configKey] };
    * @static
@@ -36,13 +40,14 @@ class AnalyticsPlugin {
 
   /**
    * Validates the provided configuration for required entries.
-   * @param {Object} config - A configuration object.
-   * @param {Object} config[AnalyticsPlugin.configKey] - A configuration object specifically for this plugin.
-   * @param {Object[]} config[AnalyticsPlugin.configKey].urls - A collection of Uttori documents.
-   * @param {RegExp[]} config[AnalyticsPlugin.configKey].url_filters - A collection of Regular Expression URL filters.
-   * @param {String} config[AnalyticsPlugin.configKey].base_url - The base URL (ie https://domain.tld) for all documents.
-   * @param {String} config[AnalyticsPlugin.configKey].directory - The path to the location you want the sitemap file to be writtent to.
-   * @param {Object} _context - A Uttori-like context (unused).
+   *
+   * @param {object} config - A configuration object.
+   * @param {object} config.configKey - A configuration object specifically for this plugin.
+   * @param {object[]} config.configKey.urls - A collection of Uttori documents.
+   * @param {RegExp[]} config.configKey.url_filters - A collection of Regular Expression URL filters.
+   * @param {string} config.configKey.base_url - The base URL (ie https://domain.tld) for all documents.
+   * @param {string} config.configKey.directory - The path to the location you want the sitemap file to be writtent to.
+   * @param {object} _context - A Uttori-like context (unused).
    * @example <caption>AnalyticsPlugin.validateConfig(config, _context)</caption>
    * AnalyticsPlugin.validateConfig({ ... });
    * @static
@@ -62,11 +67,12 @@ class AnalyticsPlugin {
 
   /**
    * Register the plugin with a provided set of events on a provided Hook system.
-   * @param {Object} context - A Uttori-like context.
-   * @param {Object} context.hooks - An event system / hook system to use.
+   *
+   * @param {object} context - A Uttori-like context.
+   * @param {object} context.hooks - An event system / hook system to use.
    * @param {Function} context.hooks.on - An event registration function.
-   * @param {Object} context.config - A provided configuration to use.
-   * @param {Object} context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
+   * @param {object} context.config - A provided configuration to use.
+   * @param {object} context.config.events - An object whose keys correspong to methods, and contents are events to listen for.
    * @example <caption>AnalyticsPlugin.register(context)</caption>
    * const context = {
    *   hooks: {
@@ -98,15 +104,23 @@ class AnalyticsPlugin {
     const analytics = new AnalyticsProvider(config);
     Object.keys(config.events).forEach((method) => {
       if (method === 'updateDocument' || method === 'getPopularDocuments' || method === 'getCount') {
-        config.events[method].forEach((event) => context.hooks.on(event, AnalyticsPlugin[method](analytics)));
+        config.events[method].forEach((event) => {
+          try {
+            context.hooks.on(event, AnalyticsPlugin[method](analytics));
+          } catch {
+            /* istanbul ignore next */
+            debug(`Missing function "${method}" for key "${event}"`);
+          }
+        });
       }
     });
   }
 
   /**
    * Wrapper function for calling update.
-   * @param {Object} analytics - An AnalyticsProvider instance.
-   * @return {Object} The provided document.
+   *
+   * @param {object} analytics - An AnalyticsProvider instance.
+   * @returns {object} The provided document.
    * @example <caption>AnalyticsPlugin.updateDocument(analytics)</caption>
    * const context = {
    *   config: {
@@ -130,8 +144,9 @@ class AnalyticsPlugin {
 
   /**
    * Wrapper function for calling update.
-   * @param {Object} analytics - An AnalyticsProvider instance.
-   * @return {Object} The provided document.
+   *
+   * @param {object} analytics - An AnalyticsProvider instance.
+   * @returns {object} The provided document.
    * @example <caption>AnalyticsPlugin.getCount(analytics, slug)</caption>
    * const context = {
    *   config: {
@@ -156,8 +171,9 @@ class AnalyticsPlugin {
 
   /**
    * Wrapper function for calling update.
-   * @param {Object} analytics - An AnalyticsProvider instance.
-   * @return {Object} The provided document.
+   *
+   * @param {object} analytics - An AnalyticsProvider instance.
+   * @returns {object} The provided document.
    * @example <caption>AnalyticsPlugin.updateDocument(analytics)</caption>
    * const context = {
    *   config: {

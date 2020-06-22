@@ -1,46 +1,3 @@
-[![view on npm](http://img.shields.io/npm/v/uttori-plugin-analytics-json-file.svg)](https://www.npmjs.org/package/uttori-plugin-analytics-json-file)
-[![npm module downloads](http://img.shields.io/npm/dt/uttori-plugin-analytics-json-file.svg)](https://www.npmjs.org/package/uttori-plugin-analytics-json-file)
-[![Build Status](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file)
-[![Dependency Status](https://david-dm.org/uttori/uttori-plugin-analytics-json-file.svg)](https://david-dm.org/uttori/uttori-plugin-analytics-json-file)
-[![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-analytics-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-analytics-json-file?branch=master)
-
-# Uttori Analytics Provider - JSON File
-
-Uttori analytics provider using JSON files on disk.
-
-## Install
-
-```bash
-npm install --save uttori-plugin-analytics-json-file
-```
-
-## Config
-
-```js
-{
-  // Registration Events
-  events: {
-    getCount: ['document-view-count'],
-    getPopularDocuments: ['popular-documents'],
-    updateDocument: ['document-save', 'document-delete'],
-    validateConfig: ['validate-config'],
-  },
-
-  // Directory files will be uploaded to.
-  directory: '',
-
-  // Name of the JSON file.
-  name: 'visits',
-
-  // File extension to use for the JSON file.
-  extension: 'json',
-}
-```
-
-* * *
-
-## API Reference
-
 <a name="AnalyticsPlugin"></a>
 
 ## AnalyticsPlugin
@@ -208,23 +165,3 @@ const context = {
 };
 AnalyticsPlugin.getPopularDocuments(analytics);
 ```
-
-* * *
-
-## Tests
-
-To run the test suite, first install the dependencies, then run `npm test`:
-
-```bash
-npm install
-npm test
-DEBUG=Uttori* npm test
-```
-
-## Contributors
-
-* [Matthew Callis](https://github.com/MatthewCallis)
-
-## License
-
-* [MIT](LICENSE)

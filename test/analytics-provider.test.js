@@ -1,3 +1,4 @@
+// @ts-nocheck
 const fs = require('fs-extra');
 const test = require('ava');
 const AnalyticsProvider = require('../src/analytics-provider');
@@ -27,7 +28,6 @@ test('constructor(config): throws an error when missing config', (t) => {
 test('constructor(config): throws an error when missing config directory', (t) => {
   t.throws(() => new AnalyticsProvider({}), { message: 'No directory provided.' });
 });
-
 
 test('update(slug): handles empty slug', async (t) => {
   const ap = new AnalyticsProvider(config);

@@ -1,6 +1,8 @@
+// @ts-nocheck
 const fs = require('fs-extra');
 const test = require('ava');
-const { EventDispatcher, FileUtility } = require('uttori-utilities');
+const { EventDispatcher } = require('@uttori/event-dispatcher');
+const { FileUtility } = require('uttori-utilities');
 const AnalyticsPlugin = require('../src');
 
 test.beforeEach(async () => {
@@ -63,9 +65,27 @@ test('AnalyticsPlugin.register(context): errors without events', (t) => {
   }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
+test('Plugin.register(context): does not error with events corresponding to missing methods', (t) => {
+  t.notThrows(() => {
+    AnalyticsPlugin.register({
+      hooks: {
+        on: () => {},
+      },
+      config: {
+        [AnalyticsPlugin.configKey]: {
+          events: {
+            test: ['fake'],
+          },
+          directory: './',
+        },
+      },
+    });
+  });
+});
+
 test('AnalyticsPlugin.register(context): can register', (t) => {
   t.notThrows(() => {
-    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: { events: { updateDocument: [] }, directory: './', } } });
+    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: { events: { updateDocument: [] }, directory: './' } } });
   });
 });
 
@@ -121,21 +141,21 @@ test('AnalyticsPlugin: E2E', async (t) => {
     { slug: 'new' },
     { slug: 'two' },
     { slug: 'test' },
-    { slug: 'zero' }
+    { slug: 'zero' },
   ]);
   output = await hooks.fetch('getPopularDocuments', {});
   t.deepEqual(output[0], [
     { slug: 'new' },
     { slug: 'two' },
     { slug: 'test' },
-    { slug: 'zero' }
+    { slug: 'zero' },
   ]);
   output = await hooks.fetch('getPopularDocuments');
   t.deepEqual(output[0], [
     { slug: 'new' },
     { slug: 'two' },
     { slug: 'test' },
-    { slug: 'zero' }
+    { slug: 'zero' },
   ]);
 
   // Can return the view count for a found document.
