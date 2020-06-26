@@ -105,12 +105,7 @@ class AnalyticsPlugin {
     Object.keys(config.events).forEach((method) => {
       if (method === 'updateDocument' || method === 'getPopularDocuments' || method === 'getCount') {
         config.events[method].forEach((event) => {
-          try {
-            context.hooks.on(event, AnalyticsPlugin[method](analytics));
-          } catch {
-            /* istanbul ignore next */
-            debug(`Missing function "${method}" for key "${event}"`);
-          }
+          context.hooks.on(event, AnalyticsPlugin[method](analytics));
         });
       }
     });
