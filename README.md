@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file)
 [![Dependency Status](https://david-dm.org/uttori/uttori-plugin-analytics-json-file.svg)](https://david-dm.org/uttori/uttori-plugin-analytics-json-file)
 [![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-analytics-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-analytics-json-file?branch=master)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-analytics-json-file.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-analytics-json-file?ref=badge_shield)
 
 # Uttori Analytics Provider - JSON File
 
@@ -228,3 +229,6 @@ DEBUG=Uttori* npm test
 ## License
 
 * [MIT](LICENSE)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-analytics-json-file.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Futtori%2Futtori-plugin-analytics-json-file?ref=badge_large)
