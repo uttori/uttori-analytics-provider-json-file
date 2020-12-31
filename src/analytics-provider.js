@@ -67,7 +67,7 @@ class AnalyticsProvider {
       this.pageVisits[slug] = value;
     }
 
-    await FileUtility.writeFileSync(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
+    await FileUtility.writeFile(this.config.directory, this.config.name, this.config.extension, JSON.stringify(this.pageVisits));
 
     debug('Updated:', slug, this.pageVisits[slug]);
     return this.pageVisits[slug];

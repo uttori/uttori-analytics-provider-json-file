@@ -14,7 +14,7 @@ declare module "analytics-provider" {
         pageVisits: any;
         update(slug: string, value?: string): Promise<number>;
         get(slug: string): number;
-        getPopularDocuments(limit: number): Promise<Array>;
+        getPopularDocuments(limit: number): Promise<any[]>;
     }
 }
 declare module "index" {

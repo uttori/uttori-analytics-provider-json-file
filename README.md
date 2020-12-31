@@ -1,6 +1,6 @@
 [![view on npm](https://img.shields.io/npm/v/@uttori/plugin-analytics-json-file.svg)](https://www.npmjs.org/package/@uttori/plugin-analytics-json-file)
 [![npm module downloads](https://img.shields.io/npm/dt/@uttori/plugin-analytics-json-file.svg)](https://www.npmjs.org/package/@uttori/plugin-analytics-json-file)
-[![Build Status](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file.svg?branch=master)](https://travis-ci.org/uttori/uttori-plugin-analytics-json-file)
+[![Build Status](https://travis-ci.com/uttori/uttori-plugin-analytics-json-file.svg?branch=master)](https://travis-ci.com/uttori/uttori-plugin-analytics-json-file)
 [![Dependency Status](https://david-dm.org/uttori/uttori-plugin-analytics-json-file.svg)](https://david-dm.org/uttori/uttori-plugin-analytics-json-file)
 [![Coverage Status](https://coveralls.io/repos/uttori/uttori-plugin-analytics-json-file/badge.svg?branch=master)](https://coveralls.io/r/uttori/uttori-plugin-analytics-json-file?branch=master)
 

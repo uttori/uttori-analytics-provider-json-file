@@ -61,7 +61,7 @@ test('AnalyticsPlugin.register(context): errors without event dispatcher', (t) =
 
 test('AnalyticsPlugin.register(context): errors without events', (t) => {
   t.throws(() => {
-    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: { } } });
+    AnalyticsPlugin.register({ hooks: { on: () => {} }, config: { [AnalyticsPlugin.configKey]: {} } });
   }, { message: 'Missing events to listen to for in \'config.events\'.' });
 });
 
@@ -97,9 +97,9 @@ test('AnalyticsPlugin: E2E', async (t) => {
       [AnalyticsPlugin.configKey]: {
         directory: 'test/site/data',
         events: {
-          getCount: ['getCount'],
-          getPopularDocuments: ['getPopularDocuments'],
-          updateDocument: ['updateDocument'],
+          getCount: ['document-view-count'],
+          getPopularDocuments: ['popular-documents'],
+          updateDocument: ['document-save'],
           validateConfig: ['validate-config'],
         },
       },
@@ -115,42 +115,42 @@ test('AnalyticsPlugin: E2E', async (t) => {
   // output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   // t.is(output, '{"test":2,"zero":0,"two":2}');
 
-  await hooks.filter('updateDocument', { slug: 'new' });
+  await hooks.filter('document-save', { slug: 'new' });
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":1,"zero":0,"two":2,"new":1}');
 
-  await hooks.filter('updateDocument', { slug: 'new' });
+  await hooks.filter('document-save', { slug: 'new' });
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":1,"zero":0,"two":2,"new":2}');
 
-  await hooks.validate('updateDocument', { slug: 'test' });
+  await hooks.validate('document-save', { slug: 'test' });
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":2,"zero":0,"two":2,"new":2}');
 
-  await hooks.validate('updateDocument', {});
+  await hooks.validate('document-save', {});
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":2,"zero":0,"two":2,"new":2}');
 
-  await hooks.filter('updateDocument', { slug: 'new' });
+  await hooks.filter('document-save', { slug: 'new' });
   output = await FileUtility.readFile('test/site/data', 'visits', 'json');
   t.is(output, '{"test":2,"zero":0,"two":2,"new":3}');
 
   // Fetch returns an array of results.
-  output = await hooks.fetch('getPopularDocuments', { limit: 4 });
+  output = await hooks.fetch('popular-documents', { limit: 4 });
   t.deepEqual(output[0], [
     { slug: 'new' },
     { slug: 'two' },
     { slug: 'test' },
     { slug: 'zero' },
   ]);
-  output = await hooks.fetch('getPopularDocuments', {});
+  output = await hooks.fetch('popular-documents', {});
   t.deepEqual(output[0], [
     { slug: 'new' },
     { slug: 'two' },
     { slug: 'test' },
     { slug: 'zero' },
   ]);
-  output = await hooks.fetch('getPopularDocuments');
+  output = await hooks.fetch('popular-documents');
   t.deepEqual(output[0], [
     { slug: 'new' },
     { slug: 'two' },
@@ -159,12 +159,12 @@ test('AnalyticsPlugin: E2E', async (t) => {
   ]);
 
   // Can return the view count for a found document.
-  output = await hooks.fetch('getCount', { slug: 'new' });
+  output = await hooks.fetch('document-view-count', { slug: 'new' });
   t.is(output[0], 3);
 
   // Return 0 for missing documents.
-  output = await hooks.fetch('getCount', { slug: 'nada' });
+  output = await hooks.fetch('document-view-count', { slug: 'nada' });
   t.is(output[0], 0);
-  output = await hooks.fetch('getCount');
+  output = await hooks.fetch('document-view-count');
   t.is(output[0], 0);
 });
